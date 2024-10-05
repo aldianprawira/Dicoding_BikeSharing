@@ -18,43 +18,43 @@ menu = st.sidebar.radio(
     ],
 )
 
-with open("../df_Day.pkl", "rb") as file:
+with open("df_Day.pkl", "rb") as file:
     df_Day = pickle.load(file)
 
-with open("../df_Hour.pkl", "rb") as file:
+with open("df_Hour.pkl", "rb") as file:
     df_Hour = pickle.load(file)
 
-with open("../monthly_rentals.pkl", "rb") as file:
+with open("monthly_rentals.pkl", "rb") as file:
     monthly_rentals = pickle.load(file)
 
-with open("../seasonal_rentals.pkl", "rb") as file:
+with open("seasonal_rentals.pkl", "rb") as file:
     seasonal_rentals = pickle.load(file)
 
-with open("../weather_data.pkl", "rb") as file:
+with open("weather_data.pkl", "rb") as file:
     weather_data = pickle.load(file)
 
-with open("../weekly_rentals.pkl", "rb") as file:
+with open("weekly_rentals.pkl", "rb") as file:
     weekly_rentals = pickle.load(file)
 
-with open("../day_type_data.pkl", "rb") as file:
+with open("day_type_data.pkl", "rb") as file:
     day_type_data = pickle.load(file)
 
-with open("../hourly_rentals_working_day.pkl", "rb") as file:
+with open("hourly_rentals_working_day.pkl", "rb") as file:
     hourly_rentals_working_day = pickle.load(file)
 
-with open("../hourly_rentals_non_working_day.pkl", "rb") as file:
+with open("hourly_rentals_non_working_day.pkl", "rb") as file:
     hourly_rentals_non_working_day = pickle.load(file)
 
-with open("../hourly_rentals_winter.pkl", "rb") as file:
+with open("hourly_rentals_winter.pkl", "rb") as file:
     hourly_rentals_winter = pickle.load(file)
 
-with open("../hourly_rentals_spring.pkl", "rb") as file:
+with open("hourly_rentals_spring.pkl", "rb") as file:
     hourly_rentals_spring = pickle.load(file)
 
-with open("../hourly_rentals_summer.pkl", "rb") as file:
+with open("hourly_rentals_summer.pkl", "rb") as file:
     hourly_rentals_summer = pickle.load(file)
 
-with open("../hourly_rentals_fall.pkl", "rb") as file:
+with open("hourly_rentals_fall.pkl", "rb") as file:
     hourly_rentals_fall = pickle.load(file)
 
 # Dataset Overview
