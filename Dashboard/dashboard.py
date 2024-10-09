@@ -1,6 +1,103 @@
+import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
-import pickle
+
+# Load data
+df_Day = pd.read_csv("data/day.csv")
+df_Hour = pd.read_csv("data/hour.csv")
+
+# Preprocessing
+df_Day = df_Day.drop(columns=["instant", "yr", "mnth"])
+season_labels = {1: "winter", 2: "spring", 3: "summer", 4: "fall"}
+df_Day["season"] = df_Day["season"].replace(season_labels)
+weekday_map = {
+    0: "Sunday",
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday",
+}
+df_Day["weekday"] = df_Day["weekday"].map(weekday_map)
+
+df_Hour = df_Hour.drop(columns=["instant", "yr", "mnth"])
+season_labels = {1: "winter", 2: "spring", 3: "summer", 4: "fall"}
+df_Hour["season"] = df_Hour["season"].replace(season_labels)
+weekday_map = {
+    0: "Sunday",
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday",
+}
+df_Hour["weekday"] = df_Hour["weekday"].map(weekday_map)
+
+# Monthly Rentals
+df_Day["dteday"] = pd.to_datetime(df_Day["dteday"])
+df_Day["year_month"] = df_Day["dteday"].dt.to_period("M")
+monthly_rentals = (
+    df_Day.groupby("year_month")[["casual", "registered", "cnt"]].sum().reset_index()
+)
+monthly_rentals["year_month"] = monthly_rentals["year_month"].dt.to_timestamp()
+
+# Seasonal Rentals
+season_order = ["spring", "summer", "fall", "winter"]
+df_Day["season"] = pd.Categorical(
+    df_Day["season"], categories=season_order, ordered=True
+)
+seasonal_rentals = df_Day.groupby("season")[["cnt"]].sum().reset_index()
+
+# Weather Rentals
+weather_data = df_Day.groupby("weathersit")["cnt"].sum().reset_index()
+
+# Weekly Rentals
+weekly_rentals = df_Day.groupby("weekday")["cnt"].sum().reset_index()
+
+# Day Type Rentals
+day_type_df = df_Day.copy()
+
+day_type_df["day_type"] = day_type_df.apply(
+    lambda row: (
+        "Holiday & Non-Working Day"
+        if row["holiday"] == 1 and row["workingday"] == 0
+        else (
+            "Holiday & Working Day"
+            if row["holiday"] == 1 and row["workingday"] == 1
+            else (
+                "Non-Holiday & Working Day"
+                if row["holiday"] == 0 and row["workingday"] == 1
+                else "Non-Holiday & Non-Working Day"
+            )
+        )
+    ),
+    axis=1,
+)
+
+day_type_data = day_type_df.groupby("day_type")["cnt"].sum().reset_index()
+day_type_data.rename(columns={"cnt": "Total Rentals"}, inplace=True)
+
+# Hourly Rentals
+working_day_data = df_Hour[df_Hour["workingday"] == 1]
+hourly_rentals_working_day = working_day_data.groupby("hr")["cnt"].sum().reset_index()
+
+non_working_day_data = df_Hour[df_Hour["workingday"] == 0]
+hourly_rentals_non_working_day = (
+    non_working_day_data.groupby("hr")["cnt"].sum().reset_index()
+)
+
+# Hourly Rentals by Season
+winter_data = df_Hour[df_Hour["season"] == "winter"]
+spring_data = df_Hour[df_Hour["season"] == "spring"]
+summer_data = df_Hour[df_Hour["season"] == "summer"]
+fall_data = df_Hour[df_Hour["season"] == "fall"]
+
+hourly_rentals_winter = winter_data.groupby("hr")["cnt"].sum().reset_index()
+hourly_rentals_spring = spring_data.groupby("hr")["cnt"].sum().reset_index()
+hourly_rentals_summer = summer_data.groupby("hr")["cnt"].sum().reset_index()
+hourly_rentals_fall = fall_data.groupby("hr")["cnt"].sum().reset_index()
 
 # Sidebar menu
 menu = st.sidebar.radio(
@@ -17,45 +114,6 @@ menu = st.sidebar.radio(
         "Hourly Rentals by Season",
     ],
 )
-
-with open("df_Day.pkl", "rb") as file:
-    df_Day = pickle.load(file)
-
-with open("df_Hour.pkl", "rb") as file:
-    df_Hour = pickle.load(file)
-
-with open("monthly_rentals.pkl", "rb") as file:
-    monthly_rentals = pickle.load(file)
-
-with open("seasonal_rentals.pkl", "rb") as file:
-    seasonal_rentals = pickle.load(file)
-
-with open("weather_data.pkl", "rb") as file:
-    weather_data = pickle.load(file)
-
-with open("weekly_rentals.pkl", "rb") as file:
-    weekly_rentals = pickle.load(file)
-
-with open("day_type_data.pkl", "rb") as file:
-    day_type_data = pickle.load(file)
-
-with open("hourly_rentals_working_day.pkl", "rb") as file:
-    hourly_rentals_working_day = pickle.load(file)
-
-with open("hourly_rentals_non_working_day.pkl", "rb") as file:
-    hourly_rentals_non_working_day = pickle.load(file)
-
-with open("hourly_rentals_winter.pkl", "rb") as file:
-    hourly_rentals_winter = pickle.load(file)
-
-with open("hourly_rentals_spring.pkl", "rb") as file:
-    hourly_rentals_spring = pickle.load(file)
-
-with open("hourly_rentals_summer.pkl", "rb") as file:
-    hourly_rentals_summer = pickle.load(file)
-
-with open("hourly_rentals_fall.pkl", "rb") as file:
-    hourly_rentals_fall = pickle.load(file)
 
 # Dataset Overview
 if menu == "Dataset Overview":
