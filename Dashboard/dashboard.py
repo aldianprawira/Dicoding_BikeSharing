@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import os
 
 # Load data
-df_Day = pd.read_csv("data\\day.csv")
-df_Hour = pd.read_csv("data\\hour.csv")
+df_Day = pd.read_csv("day.csv")
+df_Hour = pd.read_csv("hour.csv")
 
 # Preprocessing
 df_Day = df_Day.drop(columns=["instant", "yr", "mnth"])
