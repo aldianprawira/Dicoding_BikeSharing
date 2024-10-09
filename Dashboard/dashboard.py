@@ -1,11 +1,10 @@
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
-import os
 
 # Load data
-df_Day = pd.read_csv("day.csv")
-df_Hour = pd.read_csv("hour.csv")
+df_Day = pd.read_csv("data\day.csv")
+df_Hour = pd.read_csv("data\hour.csv")
 
 # Preprocessing
 df_Day = df_Day.drop(columns=["instant", "yr", "mnth"])
